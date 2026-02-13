@@ -18,6 +18,10 @@
                 </div>
             </div>
 
+                <div class="m-2">
+                    <input type="text" class="w-[600px] rounded text-black text-[14px]" placeholder="Pesquise um produto ou marca...">
+                </div>
+
                 
 
             <!-- Settings Dropdown -->
