@@ -11,6 +11,10 @@ Route::get('/home', function () {
     return view('landing-page');
 })->middleware(['auth', 'verified'])->name('home');
 
+Route::get('/produto', function (){
+    return view('pagina-individual');
+});
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
