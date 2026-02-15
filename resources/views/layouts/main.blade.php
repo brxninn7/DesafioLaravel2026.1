@@ -10,8 +10,13 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#0f172a] to-[#020617]">
-    @yield('content')
+
+<body>
+    @include('layouts.navigation')
+
+    <main>
+        @yield('content')
+    </main>
     
 </body>
 </html>

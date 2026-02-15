@@ -4,7 +4,6 @@
 
 @section('content')
 
-<x-app-layout>
     <div x-data="{
         index: 0,
         images: [
@@ -68,7 +67,6 @@
             </div>
         </div>
     </div>
-</x-app-layout>
     <script src="{{ asset('js/landing-page.js') }}"></script>
 
 @endsection
