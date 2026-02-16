@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 
-Route::get('/login', function () {
+Route::get('/welcome', function () {
     return view('welcome');
 });
 
@@ -29,5 +29,14 @@ Route::middleware('auth')->group(function () {
     Route::post('admin/produtos/salvar', [ProductController::class, 'store'])->name('products.store');
     Route::delete('admin/produtos/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 });
+
+Route::get('/cep/{cep}', function ($cep) {
+
+    $cep = preg_replace('/\D/', '', $cep);
+
+    $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
+
+    return $response->json();
+})->name('api.cep');
 
 require __DIR__.'/auth.php';
