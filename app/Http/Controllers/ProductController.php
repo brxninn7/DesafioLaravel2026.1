@@ -8,13 +8,20 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $maisVendidos = Product::orderBy('id', 'desc')->take(10)->get();
+    
+    $query = Product::query();
 
-        $lancamentos = Product::latest()->take(10)->get();
+    if ($request->has('categoria') && $request->categoria != '') {
+        $query->where('categoria', $request->categoria);
+    }
 
-        return view('landing-page', compact('maisVendidos', 'lancamentos'));
+    $lancamentos = $query->latest()->paginate(12);
+
+    $maisVendidos = Product::where('user_id', '!=', auth()->id())->take(8)->get();
+
+    return view('landing-page', compact('lancamentos', 'maisVendidos'));
     }
 
     public function show($id)
@@ -41,6 +48,7 @@ class ProductController extends Controller
         'marca' => $request->marca,
         'categoria' => $request->categoria,
         'tipo' => $request->tipo,
+        'user_id' => \app\Models\User::factory(),
     ]);
 
     return redirect()->route('dashboard')->with('success', 'Produto cadastrado!');

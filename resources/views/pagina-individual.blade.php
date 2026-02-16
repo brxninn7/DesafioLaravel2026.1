@@ -31,9 +31,9 @@
                     
                     <div class="mb-6">
                         @if($produto->estoque > 0)
-                            <span class="text-green-600 text-sm font-bold italic">✓ Em estoque: {{ $produto->estoque }} unidades</span>
+                            <span class="text-green-600 text-sm font-bold italic">Em estoque: {{ $produto->estoque }} unidades</span>
                         @else
-                            <span class="text-red-500 text-sm font-bold italic">✗ Produto esgotado</span>
+                            <span class="text-red-500 text-sm font-bold italic">Produto esgotado</span>
                         @endif
                     </div>
 
@@ -60,8 +60,14 @@
                 </div>
             </div>
 
+            <div class="mt-6 p-4 bg-gray-50 border rounded text-black">
+                <h3 class="font-bold text-lg text-black">Informações do Anunciante</h3>
+                <p><strong>Nome:</strong> {{ $produto->user->name }}</p>
+                <p><strong>Contato:</strong> {{ $produto->user->telefone }}</p>
+            </div>
+
             <div class="mt-10 pt-6 border-t border-gray-100">
-                <h3 class="text-lg font-bold italic">Descrição</h3>
+                <h3 class="text-lg font-bold">Descrição</h3>
                 <hr class="border border-black-50 rounded">
                 <p class="text-gray-600 leading-relaxed text-sm pt-5 rounded">
                     {{ $produto->descricao }}
