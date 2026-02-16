@@ -1,57 +1,72 @@
 @extends('layouts.main')
 
-@section('title', 'Home')
+@section('title', $produto->titulo)
 
 @section('content')
-
-    <div class="bg-white text-black max-w-[850px] mx-auto rounded-lg p-3">
-        <div class="produto flex">
-            <div class="imagem flex flex-col items-center">
-                <div class="imagem-produto border border-black w-[400px] h-[400px] rounded">
-                    <img src="" alt="">
+    <div class="min-h-screen py-10 px-4"> 
+        
+        <div class="bg-white text-black max-w-[850px] mx-auto rounded-lg p-6 shadow-2xl">
+            <div class="produto flex flex-col md:flex-row gap-8">
+                
+                <div class="imagem flex flex-col items-center">
+                    <div class="imagem-produto border border-gray-200 w-[350px] h-[350px] rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden">
+                        <img src="https://placehold.co/400x400?text={{ $produto->marca }}" alt="{{ $produto->titulo }}" class="object-contain w-full h-full">
+                    </div>
+                    
+                    <div class="carrossel-imagem flex items-center mt-4 gap-2">
+                        <button class="text-gray-400 hover:text-black"><i class="bi bi-chevron-left"></i></button>
+                        <div class="flex gap-2">
+                            <div class="w-12 h-12 border border-gray-200 rounded bg-gray-100"></div>
+                            <div class="w-12 h-12 border border-gray-200 rounded bg-gray-100"></div>
+                            <div class="w-12 h-12 border border-gray-200 rounded bg-gray-100"></div>
+                        </div>
+                        <button class="text-gray-400 hover:text-black"><i class="bi bi-chevron-right"></i></button>
+                    </div>
                 </div>
-                <div class="carrossel-imagem flex">
-                    <button><i class="bi bi-chevron-left rounded"></i></button>
-                    <ul class="flex gap-2 pt-2">
-                        <li class="border border-black w-[50px] h-[50px] rounded"><img src="" alt=""></li>
-                        <li class="border border-black w-[50px] h-[50px] rounded"><img src="" alt=""></li>
-                        <li class="border border-black w-[50px] h-[50px] rounded"><img src="" alt=""></li>
-                    </ul>
-                    <button><i class="bi bi-chevron-right rounded"></i></button>
+
+
+                <div class="informacoes flex-grow">
+                    <p class="text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">{{ $produto->marca }}</p>
+                    <h1 class="text-3xl font-extrabold leading-tight mb-2">{{ $produto->titulo }}</h1>
+                    
+                    <div class="mb-6">
+                        @if($produto->estoque > 0)
+                            <span class="text-green-600 text-sm font-bold italic">✓ Em estoque: {{ $produto->estoque }} unidades</span>
+                        @else
+                            <span class="text-red-500 text-sm font-bold italic">✗ Produto esgotado</span>
+                        @endif
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <p class="text-blue-700 text-4xl font-black">
+                            R$ {{ number_format($produto->preco, 2, ',', '.') }}
+                            <span class="text-sm font-normal text-gray-500">no pix</span>
+                        </p>
+                        <p class="text-gray-600 text-sm mt-1">
+                            ou até <strong>12x</strong> de <strong>R$ {{ number_format($produto->preco / 12, 2, ',', '.') }}</strong> sem juros
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="flex border border-gray-300 rounded overflow-hidden h-12">
+                            <button class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
+                            <input type="number" value="1" class="w-12 text-center focus:outline-none border-none">
+                            <button class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
+                        </div>
+                        <button class="flex-grow bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider">
+                            Comprar
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="informacoes ml-3">
-
-                <div class="titulo pb-10">
-                    <h1 class="font-bold text-2xl">Titulo do Produto</h1>
-                    <p id="estoque">Em estoque:</p>
-                </div>
-
-            <hr class="divisao border-black w-[350px]">
-
-            <div id="preco">
-                <p class="preco-pix text-[25px]"><strong>R$ 1000,00</strong> no pix</p>
-                <p id="preco-cartao">até <strong>12x</strong> de <strong>R$ XX,XX</strong> sem juros</p>
+            <div class="mt-10 pt-6 border-t border-gray-100">
+                <h3 class="text-lg font-bold italic">Descrição</h3>
+                <hr class="border border-black-50 rounded">
+                <p class="text-gray-600 leading-relaxed text-sm pt-5 rounded">
+                    {{ $produto->descricao }}
+                </p>
             </div>
-            
-
-            <div class="comprar">
-                <div class="quantidade">
-                    <button class="font-bold"> - </button>
-                    <input type="number" value="1" min="1" class="w-[50px] rounded-md text-center">
-                    <button class="font-bold"> + </button>
-
-                    <button class="bg-[#161A24] text-white p-2 w-[140px] rounded-md hover:bg-black transition-colors font-semibold">Comprar</button>
-                </div>
-            </div>
-        </div>
-        </div>
-        <div class="descricao ">
-                <h1 class="font-bold">Descrição</h1>
-                <p class="text-[15px]">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit, repellendus rem asperiores architecto
-                    neque laboriosam aut fugiat placeat non illo aliquam soluta pariatur officia, dolor nisi beatae ut
-                    nobis. Enim.</p>
-
         </div>
     </div>
+@endsection

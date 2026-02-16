@@ -2,14 +2,15 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/home', function () {
-    return view('landing-page');
-})->middleware(['auth', 'verified'])->name('home');
+Route::get('/home', [ProductController::class, 'index'])->name('home');
+
+Route::get('/produto/{id}', [ProductController::class, 'show'])->name('product.show');
 
 Route::get('/produto', function (){
     return view('pagina-individual');
