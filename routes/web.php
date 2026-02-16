@@ -5,10 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
-
 Route::get('/', [ProductController::class, 'index'])->name('home');
 
 Route::get('/produto/{id}', [ProductController::class, 'show'])->name('product.show');
