@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 
@@ -13,10 +14,9 @@ Route::get('/produto', function (){
     return view('pagina-individual');
 });
 
-Route::get('/dashboard', [AdminController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin/dashboard');
     Route::get('admin/users', [AdminController::class, 'users'])->name('admin/users');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

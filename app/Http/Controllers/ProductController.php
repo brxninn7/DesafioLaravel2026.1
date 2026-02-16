@@ -61,4 +61,15 @@ class ProductController extends Controller
 
     return redirect()->route('dashboard')->with('success', 'Produto cadastrado!');
     }
+
+    public function destroy($id) {
+
+    $produto = Product::findOrFail($id);
+
+    if (auth()->user()->is_admin || $produto->user_id == auth()->id()) {
+        $produto->delete();
+        return redirect()->back()->with('success', 'Removido!');
+    }
+    return redirect()->back()->with('error', 'Acesso negado!');
+    }
 }
