@@ -17,7 +17,7 @@ class AdminController extends Controller
 
         $produtos = Product::all();
 
-        return view('admin.dashboard', compact('produtos', 'dadosGrafico'));
+        return view('dashboard', compact('produtos', 'dadosGrafico'));
     }
 
     public function users()

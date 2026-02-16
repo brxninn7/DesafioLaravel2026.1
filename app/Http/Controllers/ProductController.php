@@ -24,4 +24,25 @@ class ProductController extends Controller
 
     return view('pagina-individual', compact('produto'));
     }
+
+    public function create()
+    {
+    return view('admin.products-create');
+    }
+
+    public function store(Request $request)
+    {
+
+    Product::create([
+        'titulo' => $request->titulo,
+        'descricao' => $request->descricacao,
+        'preco' => $request->preco,
+        'estoque' => $request->estoque,
+        'marca' => $request->marca,
+        'categoria' => $request->categoria,
+        'tipo' => $request->tipo,
+    ]);
+
+    return redirect()->route('dashboard')->with('success', 'Produto cadastrado!');
+    }
 }
