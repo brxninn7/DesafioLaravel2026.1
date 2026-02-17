@@ -5,7 +5,7 @@
     <div class="max-w-6xl mx-auto bg-white text-black p-8 rounded-lg shadow-xl">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold ">Gerenciamento de Usuários</h1>
-            <span class="bg-gray-100 px-4 py-2 rounded-full text-sm font-bold text-[#161A24]">Total: {{ $usuarios->count() }}</span>
+            <span class="bg-gray-100 px-4 py-2 rounded-full text-sm font-bold text-[#161A24]">Total: {{ $usuarios->total() }}</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -25,10 +25,21 @@
                     <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                         <td class="py-4 px-2 font-semibold">{{ $user->name }}</td>
                         <td class="py-4 px-2 text-sm text-gray-600">{{ $user->email }}</td>
-                        
+
                         <td class="py-4 px-2 text-sm italic">{{ $user->telefone ?? 'Não cadastrado' }}</td>
+
                         <td class="py-4 px-2 text-sm">
-                            {{ $user->cidade ?? '-' }} / {{ $user->estado ?? '-' }}
+                            @php
+                                $address = $user->addresses instanceof \Illuminate\Database\Eloquent\Collection 
+                                    ? $user->addresses->first() 
+                                    : $user->addresses;
+                            @endphp
+
+                            @if($address)
+                                {{ $address->cidade }} / {{ $address->estato }}
+                            @else
+                                <span class="text-gray-400 italic">- / -</span>
+                            @endif
                         </td>
 
                         <td class="py-4 px-2 text-center">
@@ -41,7 +52,6 @@
 
                         <td class="py-4 px-2">
                             <div class="flex justify-center items-center gap-2">
-
                                 <a href="{{ route('admin.users.show', $user->id) }}" class="text-blue-500 hover:text-blue-700 text-lg transition-transform hover:scale-110" title="Visualizar">
                                     <i class="bi bi-eye-fill"></i>
                                 </a>
@@ -65,6 +75,10 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
+
+        <div class="mt-6">
+            {{ $usuarios->links() }}
         </div>
     </div>
 </div>

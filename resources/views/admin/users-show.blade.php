@@ -34,11 +34,31 @@
 
             <div class="bg-gray-50 p-4 rounded shadow-sm md:col-span-2">
                 <p class="text-xs text-gray-400 uppercase font-bold mb-1">Endereço Completo</p>
-                <p class="font-semibold">
-                    {{ $user->logradouro }}, {{ $user->bairro }} - {{ $user->cidade }}/{{ $user->estado }}
-                </p>
-                <p class="text-sm text-gray-500 mt-1 italic">CEP: {{ $user->cep }}</p>
+                @if($user->addresses->count() > 0)
+                    @php $addr = $user->addresses->first(); @endphp
+                    <p class="font-semibold">
+                        {{ $addr->logradouro }}, {{ $addr->numero }} - {{ $addr->bairro }}
+                    </p>
+                    <p class="font-semibold">
+                        {{ $addr->cidade }} / {{ $addr->estato }}
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1 italic">CEP: {{ $addr->cep }}</p>
+                @else
+                    <p class="text-sm text-red-500 italic">Nenhum endereço cadastrado para este usuário.</p>
+                @endif
             </div>
+
+            <div class="bg-gray-50 p-4 rounded shadow-sm md:col-span-2">
+                <p class="text-xs text-gray-400 uppercase font-bold mb-1">Informações Adicionais</p>
+                <p class="text-sm">Conta criada em: {{ $user->created_at->format('d/m/Y H:i') }}</p>
+                <p class="text-sm">Última atualização: {{ $user->updated_at->format('d/m/Y H:i') }}</p>
+            </div>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+            <a href="{{ route('admin.users.edit', $user->id) }}" class="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 transition shadow-lg">
+                Editar Perfil
+            </a>
         </div>
     </div>
 </div>
