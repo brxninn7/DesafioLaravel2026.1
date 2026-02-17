@@ -48,7 +48,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
 
-    Product::create([
+    $product = Product::create([
         'titulo' => $request->titulo,
         'descricao' => $request->descricao,
         'preco' => $request->preco,
@@ -59,7 +59,17 @@ class ProductController extends Controller
         'user_id' => auth()->id(),
     ]);
 
+    if ($request->hasFile('fotos')) {
+        foreach ($request->file('fotos') as $foto) {
+
+            $path = $foto->store('produtos', 'public');
+            
+            $product->images()->create(['image_path' => $path]);
+        }
+    }
+
     return redirect()->route('dashboard')->with('success', 'Produto cadastrado!');
+    
     }
 
     public function destroy($id) {

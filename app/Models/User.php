@@ -21,6 +21,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telefone',
+        'cep',         
+        'cidade',      
+        'estado',      
+        'logradouro',  
+        'bairro',      
+        'saldo',       
     ];
 
     /**
@@ -48,7 +55,7 @@ class User extends Authenticatable
 
     public function addresses()
     {
-        return $this->hasMany(Address::class);
+        return $this->hasOne(Address::class);
     }
 
     public function sales(){

@@ -7,7 +7,6 @@
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
-                {{-- REMOVIDO: O link da Dashboard que ficava aqui foi retirado para limpar a barra --}}
             </div>
 
             <div class="flex items-center m-2">
@@ -33,7 +32,6 @@
                                 {{ __('Dashboard') }}
                             </x-dropdown-link>
 
-                            {{-- RF005/RF006: Apenas Admin vê o Gerenciamento de Usuários --}}
                             @if(Auth::user()->is_admin)
                                 <x-dropdown-link :href="route('admin/users')">
                                     {{ __('Usuários') }}
