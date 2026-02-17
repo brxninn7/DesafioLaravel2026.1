@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="bg-white dark:bg-gradient-to-b from-[#121316] to-[#161A24] border-b border-gray-100 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -17,7 +17,8 @@
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 focus:outline-none transition">
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md  dark:text-gray-400 bg-white dark:bg-transparent hover:text-zinc-100 focus:outline-none transition">
+                                <div class="bg-white w-[35px] h-[35px] mr-2 rounded-full items-center content-center text-[20px] text-black"><i class="bi bi-person-fill"></i><img src="" alt=""></div>
                                 <div>{{ Auth::user()->name }}</div>
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -39,7 +40,7 @@
                             @endif
 
                             <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
+                                {{ __('Perfil') }}
                             </x-dropdown-link>
 
                             <div class="border-t border-gray-100 dark:border-gray-600"></div>
@@ -55,8 +56,8 @@
                     </x-dropdown>
                 @else
                     <div class="flex gap-4">
-                        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">Entrar</a>
-                        <a href="{{ route('register') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700">Cadastrar</a>
+                        <a href="{{ route('login') }}" class="text-sm font-medium bg-white p-2 rounded text-black hover:bg-zinc-400 transition-colors">Entrar</a>
+                        <a href="{{ route('register') }}" class="text-sm font-medium bg-white p-2 rounded  text-black hover:bg-zinc-400 transition-colors">Cadastrar</a>
                     </div>
                 @endauth
             </div>
