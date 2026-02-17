@@ -59,7 +59,6 @@
                     </p>
                 </div>
 
-                {{-- Botão com a lógica de segurança que corrigimos --}}
                 @if(Auth::check() && !Auth::user()->is_admin)
                     <a href="{{ route('product.show', $produto->id) }}"
                         class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
@@ -79,7 +78,7 @@
         {{-- Mais Vendidos --}}
 <div class="maisVendidos mt-10">
     <h1 class="text-2xl mb-4">Mais vendidos</h1>
-    {{-- Mudamos de flex para grid --}}
+
     <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-6">
         @foreach ($maisVendidos as $produto)
             <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
@@ -97,7 +96,6 @@
                     </p>
                 </div>
 
-                {{-- Botão Padronizado: Aparecerá em TODOS os cards agora --}}
                 @if(Auth::check() && !Auth::user()->is_admin)
                     <a href="{{ route('product.show', $produto->id) }}"
                         class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
