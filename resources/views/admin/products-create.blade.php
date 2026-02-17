@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="flex justify-center items-center min-h-screen py-12 bg-gray-900">
+<div class="flex justify-center items-center min-h-screen py-12">
 
     <div class="w-full max-w-md p-10 bg-white rounded shadow-lg">
         <h2 class="text-2xl font-bold mb-8 text-black border-b pb-4">Novo Produto</h2>
@@ -53,7 +53,11 @@
                         <select name="categoria" class="border p-3 rounded bg-white text-black cursor-pointer" required>
                             <option value="Teclado">Teclado</option>
                             <option value="Mouse">Mouse</option>
-                            <option value="GPU">GPU</option>
+                            <option value="Mousepad">Mousepad</option>
+                            <option value="Monitor">Monitor</option>
+                            <option value="Hardware">Hardware</option>
+                            <option value="Headset">Headset</option>
+                            <option value="Controle">Controle</option>
                         </select>
                     </div>
 
@@ -64,7 +68,7 @@
                 </div>
                 
                 <button type="submit" class="bg-[#161A24] text-white py-4 rounded font-bold hover:bg-black transition mt-4 shadow-md flex items-center justify-center gap-2">
-                   <i class="bi bi-plus-lg"></i> CADASTRAR PRODUTO
+                   <i class="bi bi-plus-lg"></i> Cadastrar
                 </button>
             </div>
         </form>
