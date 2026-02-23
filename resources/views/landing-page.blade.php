@@ -55,7 +55,11 @@
                 @forelse ($produtosExibidos as $produto)
                     <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
                         <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
-                            <img src="https://placehold.co/300x200?text=PRODUTO" class="object-contain w-full h-full">
+                            @if($produto->images->isNotEmpty())
+                                <img src="{{ asset('storage/' . $produto->images->first()->image_path) }}" class="object-contain w-full h-full">
+                            @else
+                                <img src="https://placehold.co/300x200?text=SEM+FOTO" class="object-contain w-full h-full">
+                            @endif
                         </div>
                         
                         <div class="informacoes mt-4 flex-grow">
@@ -93,7 +97,11 @@
                     @foreach ($maisVendidos as $produto)
                         <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
                             <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
-                                <img src="https://placehold.co/300x200?text={{ $produto->marca }}" class="object-contain w-full h-full">
+                                @if($produto->images->isNotEmpty())
+                                    <img src="{{ asset('storage/' . $produto->images->first()->image_path) }}" class="object-contain w-full h-full">
+                                @else
+                                    <img src="https://placehold.co/300x200?text={{ $produto->marca }}" class="object-contain w-full h-full">
+                                @endif
                             </div>
 
                             <div class="informacoes mt-4 flex-grow">

@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::with('images');
 
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
@@ -25,24 +25,16 @@ class ProductController extends Controller
             $query->where('categoria', $request->categoria);
         }
 
-        if (auth()->check()) {
-            $query->where('user_id', '!=', auth()->id());
-        }
-
         $lancamentos = $query->latest()->paginate(12);
 
-        $queryMaisVendidos = Product::query();
-        if (auth()->check()) {
-            $queryMaisVendidos->where('user_id', '!=', auth()->id());
-        }
-        $maisVendidos = $queryMaisVendidos->take(4)->get();
+        $maisVendidos = Product::with('images')->take(4)->get();
 
         return view('landing-page', compact('lancamentos', 'maisVendidos'));
     }
 
     public function show($id)
     {
-        $produto = Product::findOrFail($id);
+        $produto = Product::with('images')->findOrFail($id);
         return view('pagina-individual', compact('produto'));
     }
 

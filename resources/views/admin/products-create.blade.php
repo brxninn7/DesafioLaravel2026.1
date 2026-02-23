@@ -3,24 +3,18 @@
 @section('title', 'Cadastrar Produto')
 
 @section('content')
-
 <div class="flex justify-center items-center min-h-screen py-12">
-
     <div class="w-full max-w-md p-10 bg-white rounded shadow-lg">
         <h2 class="text-2xl font-bold mb-8 text-black border-b pb-4">Novo Produto</h2>
 
         <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <div class="flex flex-col">
-                <label class="text-xs text-gray-500 uppercase font-bold mb-1">Fotos do Produto</label>
-                <input type="file" name="fotos[]" multiple class="border p-3 rounded text-black" accept="image/*">
-            </div>
-
-        </form>
-        
-        <form action="{{ route('products.store') }}" method="POST">
-            @csrf
             <div class="grid gap-6 text-black"> 
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-500 uppercase font-bold mb-1">Fotos do Produto</label>
+                    <input type="file" name="fotos[]" multiple class="border p-3 rounded text-black" accept="image/*">
+                </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500 uppercase font-bold mb-1">Título</label>
                     <input type="text" name="titulo" placeholder="Título do Produto" class="border p-3 rounded bg-white text-black focus:ring-2 focus:ring-blue-500 outline-none" required>
