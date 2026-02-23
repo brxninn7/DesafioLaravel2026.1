@@ -13,7 +13,14 @@ class ProductController extends Controller
     {
         $query = Product::query();
 
-        if ($request->has('categoria') && $request->categoria != '') {
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('titulo', 'like', '%' . $request->search . '%')
+                  ->orWhere('marca', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('categoria')) {
             $query->where('categoria', $request->categoria);
         }
 
@@ -141,26 +148,4 @@ class ProductController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Produto atualizado!');
     }
-
-    public function index(Request $request)
-{
-    $query = Product::query();
-
-    if ($request->filled('search')) {
-        $query->where('titulo', 'like', '%' . $request->search . '%');
-    }
-
-    if ($request->filled('categoria')) {
-        $query->where('categoria', $request->categoria);
-    }
-
-    if (auth()->check()) {
-        $query->where('user_id', '!=', auth()->id());
-    }
-
-    $lancamentos = $query->latest()->paginate(12);
-    $maisVendidos = Product::take(4)->get();
-
-    return view('landing-page', compact('lancamentos', 'maisVendidos'));
-}
 }

@@ -4,7 +4,6 @@
 
 @section('content')
 
-    {{-- Carrossel --}}
     <div x-data="{
         index: 0,
         images: [
@@ -31,7 +30,6 @@
 
     <div class="font-poppins text-white font-semibold text-[20px] px-10 py-5 mx-auto max-w-7xl">
 
-        {{-- Filtros --}}
         <div class="flex gap-4 mb-6">
             <span class="text-sm self-center">Filtrar por:</span>
             <a href="{{ route('home') }}" class="text-sm bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 transition">Todos</a>
@@ -40,81 +38,91 @@
             <a href="{{ route('home', ['categoria' => 'GPU']) }}" class="text-sm bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 transition">GPUs</a>
         </div>
 
-        {{-- Vistos Recentemente --}}
-<div class="recentes mt-10">
-    <h1 class="text-2xl mb-4">Vistos Recentemente</h1>
-    {{-- Grid de 4 colunas para manter o padrão --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        @foreach ($lancamentos->take(4) as $produto)
-            <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
-                <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
-                    <img src="https://placehold.co/300x200?text=VISTO" class="object-contain w-full h-full">
-                </div>
-                
-                <div class="informacoes mt-4 flex-grow">
-                    <h2 class="font-bold text-lg truncate">{{ $produto->titulo }}</h2>
-                    <p class="text-gray-500 text-sm mb-2">{{ $produto->marca }}</p>
-                    <p class="text-[22px] text-blue-700 font-bold">
-                        R$ {{ number_format($produto->preco, 2, ',', '.') }}
-                    </p>
-                </div>
-
-                @if(Auth::check() && !Auth::user()->is_admin)
-                    <a href="{{ route('product.show', $produto->id) }}"
-                        class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
-                        Comprar
-                    </a>
+        <div class="recentes mt-10">
+            <h1 class="text-2xl mb-4">
+                @if(request('search'))
+                    Resultados para: "{{ request('search') }}"
                 @else
-                    <a href="{{ route('product.show', $produto->id) }}"
-                        class="bg-gray-500 text-white text-center hover:bg-gray-600 p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
-                        Visualizar
-                    </a>
+                    Vistos Recentemente
                 @endif
+            </h1>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                @php
+                    $produtosExibidos = (request('search') || request('categoria')) ? $lancamentos : $lancamentos->take(4);
+                @endphp
+
+                @forelse ($produtosExibidos as $produto)
+                    <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
+                        <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
+                            <img src="https://placehold.co/300x200?text=PRODUTO" class="object-contain w-full h-full">
+                        </div>
+                        
+                        <div class="informacoes mt-4 flex-grow">
+                            <h2 class="font-bold text-lg truncate">{{ $produto->titulo }}</h2>
+                            <p class="text-gray-500 text-sm mb-2">{{ $produto->marca }}</p>
+                            <p class="text-[22px] text-blue-700 font-bold">
+                                R$ {{ number_format($produto->preco, 2, ',', '.') }}
+                            </p>
+                        </div>
+
+                        @if(Auth::check() && !Auth::user()->is_admin)
+                            <a href="{{ route('product.show', $produto->id) }}"
+                                class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
+                                Comprar
+                            </a>
+                        @else
+                            <a href="{{ route('product.show', $produto->id) }}"
+                                class="bg-gray-500 text-white text-center hover:bg-gray-600 p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
+                                Visualizar
+                            </a>
+                        @endif
+                    </div>
+                @empty
+                    <div class="col-span-full py-10 text-center text-gray-400">
+                        Nenhum produto encontrado.
+                    </div>
+                @endforelse
             </div>
-        @endforeach
-    </div>
-</div>
+        </div>
 
-        {{-- Mais Vendidos --}}
-<div class="maisVendidos mt-10">
-    <h1 class="text-2xl mb-4">Mais vendidos</h1>
+        @if(!request('search') && !request('categoria'))
+            <div class="maisVendidos mt-10">
+                <h1 class="text-2xl mb-4">Mais vendidos</h1>
+                <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-6">
+                    @foreach ($maisVendidos as $produto)
+                        <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
+                            <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
+                                <img src="https://placehold.co/300x200?text={{ $produto->marca }}" class="object-contain w-full h-full">
+                            </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-4 gap-6">
-        @foreach ($maisVendidos as $produto)
-            <div class="bg-white rounded text-black p-4 flex flex-col shadow-lg border border-gray-200">
-                {{-- Imagem --}}
-                <div class="imagem border border-gray-100 w-full h-[200px] rounded overflow-hidden flex items-center justify-center bg-gray-50">
-                    <img src="https://placehold.co/300x200?text={{ $produto->marca }}" class="object-contain w-full h-full">
+                            <div class="informacoes mt-4 flex-grow">
+                                <h2 class="font-bold text-lg truncate">{{ $produto->titulo }}</h2>
+                                <p class="text-gray-500 text-sm mb-2">{{ $produto->marca }}</p>
+                                <p class="text-[22px] text-blue-700 font-bold">
+                                    R$ {{ number_format($produto->preco, 2, ',', '.') }}
+                                </p>
+                            </div>
+
+                            @if(Auth::check() && !Auth::user()->is_admin)
+                                <a href="{{ route('product.show', $produto->id) }}"
+                                    class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
+                                    Comprar
+                                </a>
+                            @else
+                                <a href="{{ route('product.show', $produto->id) }}"
+                                    class="bg-gray-500 text-white text-center hover:bg-gray-600 p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
+                                    Visualizar
+                                </a>
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
-
-                {{-- Info --}}
-                <div class="informacoes mt-4 flex-grow">
-                    <h2 class="font-bold text-lg truncate">{{ $produto->titulo }}</h2>
-                    <p class="text-gray-500 text-sm mb-2">{{ $produto->marca }}</p>
-                    <p class="text-[22px] text-blue-700 font-bold">
-                        R$ {{ number_format($produto->preco, 2, ',', '.') }}
-                    </p>
-                </div>
-
-                @if(Auth::check() && !Auth::user()->is_admin)
-                    <a href="{{ route('product.show', $produto->id) }}"
-                        class="bg-[#161A24] text-white text-center hover:bg-black p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
-                        Comprar
-                    </a>
-                @else
-                    <a href="{{ route('product.show', $produto->id) }}"
-                        class="bg-gray-500 text-white text-center hover:bg-gray-600 p-[10px] w-full rounded mt-4 uppercase text-sm font-bold transition">
-                        Visualizar
-                    </a>
-                @endif
             </div>
-        @endforeach
-    </div>
-</div>
+        @endif
 
-        {{-- Paginação --}}
         <div class="mt-10">
-            {{ $lancamentos->links() }}
+            {{ $lancamentos->appends(request()->query())->links() }}
         </div>
     </div>
 

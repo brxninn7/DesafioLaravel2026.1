@@ -10,15 +10,24 @@
             </div>
 
             <div class="flex items-center m-2">
-                <input type="text" class="w-[300px] lg:w-[600px] rounded text-black text-[14px] border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" placeholder="Pesquise um produto ou marca...">
+                <form action="{{ route('home') }}" method="GET" class="relative">
+                    <input type="text" name="search" value="{{ request('search') }}" 
+                        class="w-[300px] lg:w-[600px] rounded text-black text-[14px] border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm" 
+                        placeholder="Pesquise um produto ou marca...">
+                    <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-500">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md  dark:text-gray-400 bg-white dark:bg-transparent hover:text-zinc-100 focus:outline-none transition">
-                                <div class="bg-white w-[35px] h-[35px] mr-2 rounded-full items-center content-center text-[20px] text-black"><i class="bi bi-person-fill"></i><img src="" alt=""></div>
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md dark:text-gray-400 bg-white dark:bg-transparent hover:text-zinc-100 focus:outline-none transition">
+                                <div class="bg-white w-[35px] h-[35px] mr-2 rounded-full items-center content-center text-[20px] text-black">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
                                 <div>{{ Auth::user()->name }}</div>
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -57,7 +66,7 @@
                 @else
                     <div class="flex gap-4">
                         <a href="{{ route('login') }}" class="text-sm font-medium bg-white p-2 rounded text-black hover:bg-zinc-400 transition-colors">Entrar</a>
-                        <a href="{{ route('register') }}" class="text-sm font-medium bg-white p-2 rounded  text-black hover:bg-zinc-400 transition-colors">Cadastrar</a>
+                        <a href="{{ route('register') }}" class="text-sm font-medium bg-white p-2 rounded text-black hover:bg-zinc-400 transition-colors">Cadastrar</a>
                     </div>
                 @endauth
             </div>
