@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -105,6 +106,14 @@ class ProductController extends Controller
         DB::transaction(function () use ($user, $product) {
             $user->decrement('saldo', $product->preco);
             $product->decrement('estoque', 1);
+
+            Sale::create([
+                'user_id' => $user->id,
+                'product_id' => $product->id,
+                'quantity' => 1,
+                'unit_price' => $product->preco,
+                'subprice' => $product->preco,
+            ]);
         });
 
         return redirect()->route('dashboard')->with('success', 'Compra realizada!');

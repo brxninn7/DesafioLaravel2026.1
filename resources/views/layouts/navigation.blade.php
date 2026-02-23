@@ -48,6 +48,10 @@
                                 </x-dropdown-link>
                             @endif
 
+                            <x-dropdown-link :href="route('orders.index')">
+                                {{ __('Minhas Compras') }}
+                            </x-dropdown-link>
+
                             <x-dropdown-link :href="route('profile.edit')">
                                 {{ __('Perfil') }}
                             </x-dropdown-link>

@@ -67,5 +67,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/produtos/{id}/editar', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/produtos/{id}', [ProductController::class, 'update'])->name('products.update');
 
+    Route::get('/minhas-compras', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
+
     });
 });
