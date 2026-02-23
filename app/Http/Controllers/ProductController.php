@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -34,7 +35,6 @@ class ProductController extends Controller
     public function show($id)
     {
         $produto = Product::findOrFail($id);
-
         return view('pagina-individual', compact('produto'));
     }
 
@@ -71,6 +71,9 @@ class ProductController extends Controller
         $produto = Product::findOrFail($id);
 
         if (auth()->user()->is_admin || $produto->user_id == auth()->id()) {
+            foreach($produto->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+            }
             $produto->delete();
 
             return redirect()->back()->with('success', 'Removido!');
@@ -85,11 +88,11 @@ class ProductController extends Controller
         $user = auth()->user();
 
         if ($user->saldo < $product->preco) {
-            return back()->with('error', 'Saldo insuficiente. Adiciona fundos na tua carteira.');
+            return back()->with('error', 'Saldo insuficiente.');
         }
 
         if ($product->estoque <= 0) {
-            return back()->with('error', 'Este produto já esgotou!');
+            return back()->with('error', 'Produto esgotado!');
         }
 
         DB::transaction(function () use ($user, $product) {
@@ -97,14 +100,14 @@ class ProductController extends Controller
             $product->decrement('estoque', 1);
         });
 
-        return redirect()->route('dashboard')->with('success', 'Compra realizada com sucesso!');
+        return redirect()->route('dashboard')->with('success', 'Compra realizada!');
     }
 
     public function edit($id)
     {
         $produto = Product::findOrFail($id);
 
-        if (auth()->id() !== $produto->user_id && ! auth()->user()->is_admin) {
+        if (auth()->id() !== $produto->user_id && !auth()->user()->is_admin) {
             return redirect()->route('dashboard')->with('error', 'Acesso negado!');
         }
 
@@ -115,7 +118,7 @@ class ProductController extends Controller
     {
         $produto = Product::findOrFail($id);
 
-        if (auth()->id() !== $produto->user_id && ! auth()->user()->is_admin) {
+        if (auth()->id() !== $produto->user_id && !auth()->user()->is_admin) {
             return redirect()->route('dashboard')->with('error', 'Acesso negado!');
         }
 
@@ -126,8 +129,38 @@ class ProductController extends Controller
             'estoque' => $request->estoque,
             'marca' => $request->marca,
             'categoria' => $request->categoria,
+            'tipo' => $request->tipo,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Produto atualizado com sucesso!');
+        if ($request->hasFile('fotos')) {
+            foreach ($request->file('fotos') as $foto) {
+                $path = $foto->store('produtos', 'public');
+                $produto->images()->create(['image_path' => $path]);
+            }
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Produto atualizado!');
     }
+
+    public function index(Request $request)
+{
+    $query = Product::query();
+
+    if ($request->filled('search')) {
+        $query->where('titulo', 'like', '%' . $request->search . '%');
+    }
+
+    if ($request->filled('categoria')) {
+        $query->where('categoria', $request->categoria);
+    }
+
+    if (auth()->check()) {
+        $query->where('user_id', '!=', auth()->id());
+    }
+
+    $lancamentos = $query->latest()->paginate(12);
+    $maisVendidos = Product::take(4)->get();
+
+    return view('landing-page', compact('lancamentos', 'maisVendidos'));
+}
 }

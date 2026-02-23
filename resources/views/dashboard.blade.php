@@ -13,6 +13,13 @@
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 shadow-sm" role="alert">
+                    <strong class="font-bold">Erro!</strong>
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="p-6 bg-white shadow sm:rounded-lg md:col-span-2">
                     <h3 class="text-lg font-bold mb-4 text-black">Produtos por Categoria</h3>
@@ -63,6 +70,11 @@
                                     </td>
                                     <td class="p-3 flex justify-center gap-4">
                                         <a href="{{ route('product.show', $p->id) }}" class="text-blue-500 hover:text-blue-700 text-xl"><i class="bi bi-eye-fill"></i></a>
+                                        
+                                        <a href="{{ route('products.edit', $p->id) }}" class="text-amber-500 hover:text-amber-700 text-xl">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
                                         <form class="m-0" action="{{ route('products.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Excluir produto?')">
                                             @csrf
                                             @method('DELETE')
