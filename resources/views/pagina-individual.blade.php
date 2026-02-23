@@ -8,11 +8,12 @@
             <div class="produto flex flex-col md:flex-row gap-8">
                 
                 <div class="imagem flex flex-col items-center">
-
                     <div class="imagem-produto border border-gray-200 w-[350px] h-[350px] rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden">
                         @if($produto->images->count() > 0)
-                            <img src="{{ asset('storage/' . $produto->images->first()->image_path) }}">
-                                 alt="{{ $produto->titulo }}" class="object-contain w-full h-full transition-opacity duration-300">
+                            <img src="{{ asset('storage/' . $produto->images->first()->image_path) }}" 
+                                 id="main-photo" 
+                                 alt="{{ $produto->titulo }}" 
+                                 class="object-contain w-full h-full transition-opacity duration-300">
                         @else
                             <img src="https://placehold.co/400x400?text=Sem+Foto" class="object-contain w-full h-full">
                         @endif
@@ -53,7 +54,6 @@
                         </p>
                     </div>
 
-
                     <div class="flex items-center gap-4">
                         <div class="flex border border-gray-300 rounded overflow-hidden h-12">
                             <button class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
@@ -61,11 +61,22 @@
                             <button class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
                         </div>
 
-                        @if(!Auth::user()->is_admin)
-                            <button class="flex-grow bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider">
-                                Comprar
-                            </button>
-                        @endif
+                        @auth
+                            @if(!Auth::user()->is_admin)
+                                <form action="{{ route('products.buy', $produto->id) }}" method="POST" class="flex-grow">
+                                    @csrf
+                                    <button type="submit" 
+                                        class="w-full bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider {{ $produto->estoque <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        {{ $produto->estoque <= 0 ? 'disabled' : '' }}>
+                                        {{ $produto->estoque <= 0 ? 'Esgotado' : 'Comprar' }}
+                                    </button>
+                                </form>
+                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="flex-grow flex items-center justify-center bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider text-center">
+                                Login para Comprar
+                            </a>
+                        @endauth
                     </div>
                 </div>
             </div>
@@ -93,11 +104,13 @@
     <script>
         function changePhoto(src) {
             const mainPhoto = document.getElementById('main-photo');
-            mainPhoto.style.opacity = '0';
-            setTimeout(() => {
-                mainPhoto.src = src;
-                mainPhoto.style.opacity = '1';
-            }, 200);
+            if(mainPhoto) {
+                mainPhoto.style.opacity = '0';
+                setTimeout(() => {
+                    mainPhoto.src = src;
+                    mainPhoto.style.opacity = '1';
+                }, 200);
+            }
         }
     </script>
 @endsection

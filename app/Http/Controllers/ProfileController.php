@@ -57,4 +57,18 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function deposit(Request $request)
+    {
+        $request->validate([
+            'value' => 'required|numeric|min:1',
+        ]);
+
+        $user = auth()->user();
+        
+        $user->saldo += $request->value;
+        $user->save();
+
+        return back()->with('success', 'Saldo adicionado com sucesso! Agora já podes comprar produtos.');
+    }
 }

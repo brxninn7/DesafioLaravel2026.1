@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProductController;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -56,4 +58,14 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::middleware('auth')->group(function () {
+    Route::post('/profile/deposit', [ProfileController::class, 'deposit'])->name('profile.deposit');
+
+    Route::post('/produtos/{id}/comprar', [ProductController::class, 'buy'])->name('products.buy')->middleware('auth');
+
+    Route::get('/produtos/{id}/editar', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/produtos/{id}', [ProductController::class, 'update'])->name('products.update');
+
+    });
 });
