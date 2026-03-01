@@ -52,6 +52,11 @@
                                 </x-dropdown-link>
                             @endif
 
+                                <x-dropdown-link :href="route('admin.sales.index')">
+                                    {{ __('Histórico de Vendas') }}
+                                </x-dropdown-link>
+                            
+
                             <x-dropdown-link :href="route('orders.index')">
                                 {{ __('Minhas Compras') }}
                             </x-dropdown-link>

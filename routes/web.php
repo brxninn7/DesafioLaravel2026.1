@@ -40,6 +40,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/compras/baixar-pdf', [OrderController::class, 'exportPdf'])->middleware('auth')->name('orders.pdf');
 
+    Route::get('/admin/historico-vendas', [AdminController::class, 'salesHistory'])->name('admin.sales.index');
+
+
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {

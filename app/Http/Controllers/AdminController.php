@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Address;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\SalesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -18,6 +22,40 @@ class AdminController extends Controller
         $produtos = Product::all();
 
         return view('dashboard', compact('produtos', 'dadosGrafico'));
+    }
+
+    public function salesHistory(Request $request)
+    {
+        $query = Sale::with(['user', 'product.user']);
+
+        if (!auth()->user()->is_admin) {
+            $query->whereHas('product', function($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+
+        if ($request->filled('data_inicio')) {
+            $query->whereDate('created_at', '>=', $request->data_inicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->whereDate('created_at', '<=', $request->data_fim);
+        }
+
+        if ($request->export == 'pdf') {
+            $vendasParaExportar = $query->get();
+            $pdf = Pdf::loadView('orders.pdf', ['compras' => $vendasParaExportar]);
+            return $pdf->download('relatorio-vendas.pdf');
+        }
+
+        if ($request->export == 'xlsx' && auth()->user()->is_admin) {
+            $vendasParaExportar = $query->get();
+            return Excel::download(new SalesExport($vendasParaExportar), 'relatorio-vendas.xlsx');
+        }
+
+        $vendas = $query->latest()->paginate(10);
+
+        return view('admin.sales-index', compact('vendas'));
     }
 
     public function users()
