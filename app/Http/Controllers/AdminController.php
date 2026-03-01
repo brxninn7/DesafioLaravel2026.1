@@ -65,4 +65,10 @@ class AdminController extends Controller
 
         return redirect()->back()->with('success', 'Usuário removido com sucesso!');
     }
+
+    public function createUser()
+    {
+        
+        return view('admin.users-create');
+    }
 }

@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/users/edit/{id}', [AdminController::class, 'editUser'])->name('admin.users.edit');
     Route::put('/admin/users/update/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/destroy/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+    Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
 });
 
 Route::get('/cep/{cep}', function ($cep) {

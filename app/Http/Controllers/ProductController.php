@@ -99,6 +99,8 @@ class ProductController extends Controller
             $user->decrement('saldo', $product->preco);
             $product->decrement('estoque', 1);
 
+            $product->user->increment('saldo', $product->preco);
+
             Sale::create([
                 'user_id' => $user->id,
                 'product_id' => $product->id,

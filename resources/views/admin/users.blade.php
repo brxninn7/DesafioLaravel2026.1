@@ -5,7 +5,9 @@
     <div class="max-w-6xl mx-auto bg-white text-black p-8 rounded-lg shadow-xl">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold ">Gerenciamento de Usuários</h1>
-            <span class="bg-gray-100 px-4 py-2 rounded-full text-sm font-bold text-[#161A24]">Total: {{ $usuarios->total() }}</span>
+            <a href="{{ route('admin.users.create') }}" class="bg-[#161A24] text-white px-4 py-2 rounded shadow hover:bg-black transition-all">
+                <i class="bi bi-plus-lg"></i> Novo Usuário
+            </a>
         </div>
 
         <div class="overflow-x-auto">
