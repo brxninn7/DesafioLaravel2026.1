@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -20,7 +21,6 @@ class AdminController extends Controller
 
     public function users()
     {
-
         $usuarios = User::with('addresses')->where('is_admin', false)->paginate(10);
         return view('admin.users', compact('usuarios'));
     }
@@ -51,7 +51,6 @@ class AdminController extends Controller
                 'logradouro' => $request->logradouro ?? 'Não informado',
                 'bairro' => $request->bairro ?? 'Não informado',
                 'estato' => $request->estado ?? 'MG',
-                
             ]
         );
 
@@ -68,7 +67,39 @@ class AdminController extends Controller
 
     public function createUser()
     {
-        
         return view('admin.users-create');
+    }
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'cep' => 'required|string|max:9',
+            'logradouro' => 'required|string',
+            'numero' => 'required|string',
+            'bairro' => 'required|string',
+            'cidade' => 'required|string',
+            'estado' => 'required|string|max:2',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'is_admin' => $request->has('is_admin'),
+        ]);
+
+        $user->addresses()->create([
+            'cep' => $request->cep,
+            'logradouro' => $request->logradouro,
+            'numero' => $request->numero,
+            'bairro' => $request->bairro,
+            'cidade' => $request->cidade,
+            'estato' => $request->estado,
+        ]);
+
+        return redirect()->route('admin/users')->with('success', 'Usuário criado com sucesso!');
     }
 }

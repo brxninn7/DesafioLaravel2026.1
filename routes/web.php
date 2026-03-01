@@ -31,12 +31,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin/users/update/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
     Route::delete('/admin/users/destroy/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
+
+    Route::post('/admin/users/store', [AdminController::class, 'storeUser'])->name('admin.users.store');
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {
         $cep = preg_replace('/\D/', '', $cep);
         $response = Http::get("https://viacep.com.br/ws/{$cep}/json/");
-    
+
         return $response->json();
     })->name('api.cep');
 
