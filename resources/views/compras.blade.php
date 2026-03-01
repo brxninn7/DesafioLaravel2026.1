@@ -5,11 +5,20 @@
 @section('content')
 
 <div class="font-poppins text-white px-10 py-10 mx-auto max-w-7xl">
-    <div class="flex items-center gap-4 mb-8">
-        <div class="bg-blue-700 p-3 rounded-lg">
-            <i class="bi bi-bag-check-fill text-2xl"></i>
+    <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-700 p-3 rounded-lg">
+                <i class="bi bi-bag-check-fill text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold">Minhas Compras</h1>
         </div>
-        <h1 class="text-3xl font-bold">Minhas Compras</h1>
+
+        @if(!$compras->isEmpty())
+            <a href="{{ route('orders.pdf') }}" class="bg-white text-black px-6 py-2 rounded font-black text-xs uppercase hover:bg-gray-200 transition-all flex items-center gap-2 shadow-lg">
+                <i class="bi bi-file-earmark-pdf-fill text-lg"></i>
+                Baixar PDF
+            </a>
+        @endif
     </div>
 
     @if($compras->isEmpty())
@@ -36,7 +45,7 @@
                             <td class="p-5 border-b border-gray-800">
                                 <div class="flex items-center gap-4">
                                     <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center overflow-hidden">
-                                        <img src="https://placehold.co/100x100?text=IMG" class="object-contain w-full h-full">
+                                        <img src="{{ $compra->product->foto ? asset('storage/' . $compra->product->foto) : 'https://placehold.co/100x100?text=IMG' }}" class="object-contain w-full h-full">
                                     </div>
                                     <span class="font-semibold">{{ $compra->product->titulo }}</span>
                                 </div>

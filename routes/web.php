@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/produto/{id}', [ProductController::class, 'show'])->name('product.show');
@@ -36,6 +37,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/administradores', [AdminController::class, 'admins'])->name('admin.admins.index');
     Route::post('/admin/admins/toggle/{id}', [AdminController::class, 'toggleAdmin'])->name('admin.admins.toggle');
+
+    Route::get('/compras/baixar-pdf', [OrderController::class, 'exportPdf'])->middleware('auth')->name('orders.pdf');
 
 });
 
