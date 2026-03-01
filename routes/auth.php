@@ -69,5 +69,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/minhas-compras', [App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
 
+    Route::delete('/profile/address/{address}', [ProfileController::class, 'destroyAddress'])->name('address.destroy');
+    Route::post('/profile/address', [ProfileController::class, 'storeAddress'])->name('address.store');
+
     });
 });

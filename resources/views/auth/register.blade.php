@@ -28,53 +28,58 @@
 
         <div class="mt-4">
             <x-input-label for="cpf" :value="__('CPF')" />
-            <x-text-input id="cpf" class="block mt-1 w-full" type="text" name="cpf" required />
+            <x-text-input id="cpf" class="block mt-1 w-full" type="text" name="cpf" :value="old('cpf')" required />
+            <x-input-error :messages="$errors->get('cpf')" class="mt-2" />
         </div>
 
         <div class="grid grid-cols-2 gap-4 mt-4">
             <div>
-                <x-input-label for="telefone" :value="__('Telefone')" />
-                <x-text-input id="telefone" class="block mt-1 w-full" type="text" name="telefone" required />
+                <x-input-label for="phone" :value="__('Telefone')" />
+                <x-text-input id="phone" class="block mt-1 w-full" type="text" name="phone" :value="old('phone')" required />
+                <x-input-error :messages="$errors->get('phone')" class="mt-2" />
             </div>
             <div>
-                <x-input-label for="data_nascimento" :value="__('Data de Nascimento')" />
-                <x-text-input id="data_nascimento" class="block mt-1 w-full" type="date" name="data_nascimento" required />
+                <x-input-label for="date_of_birth" :value="__('Data de Nascimento')" />
+                <x-text-input id="date_of_birth" class="block mt-1 w-full" type="date" name="date_of_birth" :value="old('date_of_birth')" required />
+                <x-input-error :messages="$errors->get('date_of_birth')" class="mt-2" />
             </div>
         </div>
 
         <div class="mt-4 p-4 bg-gray-800 rounded">
-            <h3 class="text-white mb-2 text-sm font-bold">Endereço</h3>
+            <h3 class="text-white mb-2 text-sm font-bold uppercase">Endereço</h3>
             
             <div>
                 <x-input-label for="cep" :value="__('CEP')" />
-                <x-text-input id="cep" class="block mt-1 w-full" type="text" name="cep" required />
+                <x-text-input id="cep" class="block mt-1 w-full" type="text" name="cep" :value="old('cep')" required />
+                <x-input-error :messages="$errors->get('cep')" class="mt-2" />
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-2">
                 <div>
                     <x-input-label for="logradouro" :value="__('Logradouro')" />
-                    <x-text-input id="logradouro" class="block mt-1 w-full bg-gray-700" type="text" name="logradouro" readonly />
+                    <x-text-input id="logradouro" class="block mt-1 w-full" type="text" name="logradouro" :value="old('logradouro')" required />
                 </div>
                 <div>
                     <x-input-label for="bairro" :value="__('Bairro')" />
-                    <x-text-input id="bairro" class="block mt-1 w-full bg-gray-700" type="text" name="bairro" readonly />
+                    <x-text-input id="bairro" class="block mt-1 w-full" type="text" name="bairro" :value="old('bairro')" required />
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mt-2">
                 <div>
                     <x-input-label for="cidade" :value="__('Cidade')" />
-                    <x-text-input id="cidade" class="block mt-1 w-full bg-gray-700" type="text" name="cidade" readonly />
+                    <x-text-input id="cidade" class="block mt-1 w-full" type="text" name="cidade" :value="old('cidade')" required />
                 </div>
                 <div>
                     <x-input-label for="estado" :value="__('Estado')" />
-                    <x-text-input id="estado" class="block mt-1 w-full bg-gray-700" type="text" name="estado" readonly />
+                    <x-text-input id="estado" class="block mt-1 w-full" type="text" name="estado" :value="old('estado')" required />
                 </div>
             </div>
 
             <div class="mt-2">
                 <x-input-label for="numero" :value="__('Número')" />
-                <x-text-input id="numero" class="block mt-1 w-full" type="text" name="numero" required />
+                <x-text-input id="numero" class="block mt-1 w-full" type="text" name="numero" :value="old('numero')" required />
+                <x-input-error :messages="$errors->get('numero')" class="mt-2" />
             </div>
         </div>
 
@@ -93,7 +98,7 @@
         let cep = this.value.replace(/\D/g, '');
         
         if (cep.length === 8) {
-            fetch(`/cep/${cep}`) 
+            fetch(`api/cep/${cep}`) 
                 .then(response => response.json())
                 .then(data => {
                     if (!data.erro) {
