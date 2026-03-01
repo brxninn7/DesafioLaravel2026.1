@@ -33,6 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
 
     Route::post('/admin/users/store', [AdminController::class, 'storeUser'])->name('admin.users.store');
+
+    Route::get('/admin/administradores', [AdminController::class, 'admins'])->name('admin.admins.index');
+    Route::post('/admin/admins/toggle/{id}', [AdminController::class, 'toggleAdmin'])->name('admin.admins.toggle');
+
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {

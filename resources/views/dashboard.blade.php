@@ -7,14 +7,16 @@
         <div class="max-w-7xl mx-auto space-y-6">
 
             @if (session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative shadow-sm mb-6" role="alert">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative shadow-sm mb-6"
+                    role="alert">
                     <strong class="font-bold">Sucesso!</strong>
                     <span class="block sm:inline">{{ session('success') }}</span>
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 shadow-sm" role="alert">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 shadow-sm"
+                    role="alert">
                     <strong class="font-bold">Erro!</strong>
                     <span class="block sm:inline">{{ session('error') }}</span>
                 </div>
@@ -41,11 +43,13 @@
 
             <div class="p-6 bg-white shadow sm:rounded-lg">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-lg font-bold text-black italic">Meus Produtos Cadastrados</h3>
-                    <a href="{{ route('products.create') }}"
-                        class="bg-[#161A24] text-white px-4 py-2 rounded shadow hover:bg-black transition-all flex items-center gap-2">
-                        <i class="bi bi-plus-lg"></i> Cadastrar Produto
-                    </a>
+                    <h3 class="text-lg font-bold text-black">Meus Produtos Cadastrados</h3>
+                    @if (!auth()->user()->is_admin)
+                        <a href="{{ route('products.create') }}"
+                            class="bg-[#161A24] text-white px-4 py-2 rounded shadow hover:bg-black transition-all flex items-center gap-2">
+                            <i class="bi bi-plus-lg"></i> Cadastrar Produto
+                        </a>
+                    @endif
                 </div>
 
                 <div class="overflow-x-auto">
@@ -69,22 +73,28 @@
                                         </span>
                                     </td>
                                     <td class="p-3 flex justify-center gap-4">
-                                        <a href="{{ route('product.show', $p->id) }}" class="text-blue-500 hover:text-blue-700 text-xl"><i class="bi bi-eye-fill"></i></a>
-                                        
-                                        <a href="{{ route('products.edit', $p->id) }}" class="text-amber-500 hover:text-amber-700 text-xl">
+                                        <a href="{{ route('product.show', $p->id) }}"
+                                            class="text-blue-500 hover:text-blue-700 text-xl"><i
+                                                class="bi bi-eye-fill"></i></a>
+
+                                        <a href="{{ route('products.edit', $p->id) }}"
+                                            class="text-blue-500 hover:text-blue-700 text-xl">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
 
-                                        <form class="m-0" action="{{ route('products.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Excluir produto?')">
+                                        <form class="m-0" action="{{ route('products.destroy', $p->id) }}"
+                                            method="POST" onsubmit="return confirm('Excluir produto?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700 text-xl"><i class="bi bi-trash"></i></button>
+                                            <button type="submit" class="text-red-500 hover:text-red-700 text-xl"><i
+                                                    class="bi bi-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="p-4 text-center text-gray-500">Você ainda não cadastrou produtos.</td>
+                                    <td colspan="4" class="p-4 text-center text-gray-500">Você ainda não cadastrou
+                                        produtos.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -116,7 +126,9 @@
                     scales: {
                         y: {
                             beginAtZero: true,
-                            ticks: { stepSize: 1 }
+                            ticks: {
+                                stepSize: 1
+                            }
                         }
                     }
                 }

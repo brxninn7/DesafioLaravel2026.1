@@ -43,6 +43,10 @@
                             </x-dropdown-link>
 
                             @if(Auth::user()->is_admin)
+                                <x-dropdown-link :href="route('admin.admins.index')">
+                                    {{ __('Admins') }}
+                                </x-dropdown-link>
+                                
                                 <x-dropdown-link :href="route('admin/users')">
                                     {{ __('Usuários') }}
                                 </x-dropdown-link>

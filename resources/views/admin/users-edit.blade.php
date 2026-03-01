@@ -16,7 +16,7 @@
                     <input type="text" name="name" value="{{ $user->name }}" class="w-full border p-2 rounded">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-400">Telefone (Obrigatório RF003)</label>
+                    <label class="block text-xs font-bold uppercase text-gray-400">Telefone</label>
                     <input type="text" name="telefone" value="{{ $user->telefone }}" class="w-full border p-2 rounded" placeholder="(00) 00000-0000">
                 </div>
 
@@ -42,13 +42,11 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400">Bairro</label>
-
                     <input type="text" id="bairro" name="bairro" value="{{ $user->addresses->first()->bairro ?? '' }}" class="w-full border p-2 rounded">
                 </div>
 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold uppercase text-gray-400">Logradouro</label>
-
                     <input type="text" id="logradouro" name="logradouro" value="{{ $user->addresses->first()->logradouro ?? '' }}" class="w-full border p-2 rounded">
                 </div>
 
@@ -62,7 +60,7 @@
                 <button type="submit" class="bg-[#161a24] text-white px-6 py-2 rounded font-bold hover:bg-black transition shadow-lg">
                     Salvar Alterações
                 </button>
-                <a href="{{ route('admin/users') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded font-bold hover:bg-gray-300 transition">
+                <a href="{{ $user->is_admin ? route('admin.admins.index') : route('admin/users') }}" class="bg-gray-200 text-gray-700 px-6 py-2 rounded font-bold hover:bg-gray-300 transition">
                     Cancelar
                 </a>
             </div>
@@ -74,16 +72,14 @@
 function buscarCep(cep) {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
-        fetch(`/cep/${cleanCep}`)
+        fetch(`/api/cep/${cleanCep}`)
             .then(response => response.json())
             .then(data => {
                 if(!data.erro) {
-                    document.getElementById('cidade').value = data.localidade;
-                    document.getElementById('estado').value = data.uf;
+                    document.getElementById('cidade').value = data.localidade || '';
+                    document.getElementById('estado').value = data.uf || '';
                     document.getElementById('logradouro').value = data.logradouro || '';
                     document.getElementById('bairro').value = data.bairro || '';
-                } else {
-                    alert('CEP não encontrado.');
                 }
             })
             .catch(error => console.error('Erro:', error));
