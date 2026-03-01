@@ -20,10 +20,40 @@ class AdminController extends Controller
 {
     public function index()
     {
-        $dadosGrafico = Product::select('categoria', DB::raw('count(*) as total'))->groupBy('categoria')->get();
-        $produtos = Product::all();
+        if (auth()->user()->is_admin) {
+            $dadosGrafico = Product::select(
+                DB::raw('COUNT(*) as total'),
+                DB::raw("DATE_FORMAT(created_at, '%m/%Y') as mes")
+            )
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy(DB::raw("LAST_DAY(created_at)"), DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
+            ->orderBy(DB::raw("LAST_DAY(created_at)"), 'asc')
+            ->get();
+        } else {
+            $dadosGrafico = Sale::whereHas('product', function($q) {
+                $q->where('user_id', auth()->id());
+            })
+            ->select(
+                DB::raw('COUNT(*) as total'),
+                DB::raw("DATE_FORMAT(created_at, '%m/%Y') as mes")
+            )
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy(DB::raw("LAST_DAY(created_at)"), DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
+            ->orderBy(DB::raw("LAST_DAY(created_at)"), 'asc')
+            ->get();
+        }
 
-        return view('dashboard', compact('produtos', 'dadosGrafico'));
+        $queryProdutos = Product::query();
+        if (!auth()->user()->is_admin) {
+            $queryProdutos->where('user_id', auth()->id());
+        }
+        
+        $produtos = $queryProdutos->latest()->get();
+
+        return view('dashboard', [
+            'produtos' => $produtos,
+            'dadosGrafico' => $dadosGrafico
+        ]);
     }
 
     public function sendEmailToUser(Request $request, $id)
