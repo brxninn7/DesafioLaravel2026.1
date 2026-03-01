@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\SalesExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\AdminContactUser;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -22,6 +24,20 @@ class AdminController extends Controller
         $produtos = Product::all();
 
         return view('dashboard', compact('produtos', 'dadosGrafico'));
+    }
+
+    public function sendEmailToUser(Request $request, $id)
+    {
+        $request->validate([
+            'assunto' => 'required|string|max:255',
+            'mensagem' => 'required|string',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        Mail::to($user->email)->send(new AdminContactUser($user, $request->assunto, $request->mensagem));
+
+        return redirect()->back()->with('success', 'E-mail enviado com sucesso para ' . $user->name);
     }
 
     public function salesHistory(Request $request)

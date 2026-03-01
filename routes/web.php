@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/historico-vendas', [AdminController::class, 'salesHistory'])->name('admin.sales.index');
 
-
+    Route::post('/admin/users/{id}/send-email', [AdminController::class, 'sendEmailToUser'])->name('admin.users.email');
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {
