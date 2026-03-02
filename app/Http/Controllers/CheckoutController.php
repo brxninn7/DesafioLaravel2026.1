@@ -52,6 +52,7 @@ class CheckoutController extends Controller
                 'product_id' => $produto->id,
                 'quantidade' => $quantidade,
                 'unit_price' => $produto->preco,
+                'subprice' => $produto->preco * $quantidade,
                 'status' => 'pendente', 
                 'reference' => 'REF_' . time()
             ]);
