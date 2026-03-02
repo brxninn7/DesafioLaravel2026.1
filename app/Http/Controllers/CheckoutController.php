@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\PagSeguroService;
 use App\Models\Product;
+use App\Models\Sale;
 
 class CheckoutController extends Controller
 {
@@ -19,6 +20,7 @@ class CheckoutController extends Controller
     {
         $produto = Product::findOrFail($request->product_id);
         $user = auth()->user();
+        $quantidade = (int) $request->input('quantidade', 1);
 
         $dadosCheckout = [
             "customer" => [
@@ -29,7 +31,7 @@ class CheckoutController extends Controller
                 [
                     "reference_id" => (string) $produto->id,
                     "name" => substr($produto->titulo, 0, 64),
-                    "quantity" => (int) $request->input('quantidade', 1),
+                    "quantity" => $quantidade,
                     "unit_amount" => (int) ($produto->preco * 100)
                 ]
             ],
@@ -38,12 +40,22 @@ class CheckoutController extends Controller
                 ["type" => "BOLETO"],
                 ["type" => "PIX"]
             ],
-            "redirect_url" => route('home'), 
+            "redirect_url" => route('home'),
         ];
 
         $resultado = $this->pagSeguroService->criarCheckout($dadosCheckout);
 
         if (isset($resultado['links'])) {
+            
+            Sale::create([
+                'user_id' => $user->id,
+                'product_id' => $produto->id,
+                'quantidade' => $quantidade,
+                'unit_price' => $produto->preco,
+                'status' => 'pendente', 
+                'reference' => 'REF_' . time()
+            ]);
+
             foreach ($resultado['links'] as $link) {
                 if ($link['rel'] == 'PAY') {
                     return redirect()->to($link['href']);
@@ -51,6 +63,6 @@ class CheckoutController extends Controller
             }
         }
 
-        return redirect()->back()->with('error', 'Erro ao gerar checkout JSON. Verifique os logs.');
+        return redirect()->back()->with('error', 'Erro ao processar pagamento.');
     }
 }
