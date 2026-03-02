@@ -70,9 +70,9 @@
                                     
                                     <div class="flex items-center gap-4 mb-4">
                                         <div class="flex border border-gray-300 rounded overflow-hidden h-12">
-                                            <button type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()" class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
-                                            <input type="number" name="quantidade" value="1" min="1" max="{{ $produto->estoque }}" class="w-12 text-center focus:outline-none border-none text-black">
-                                            <button type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()" class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
+                                            <button type="button" onclick="alterarQuantidade(-1)" class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
+                                            <input type="number" id="quantidade_input" name="quantidade" value="1" min="1" max="{{ $produto->estoque }}" readonly class="w-16 text-center focus:outline-none border-none text-black bg-white">
+                                            <button type="button" onclick="alterarQuantidade(1)" class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
                                         </div>
 
                                         <button type="submit" 
@@ -96,7 +96,7 @@
                 <h3 class="font-bold text-lg text-black mb-2">Informações do Anunciante</h3>
                 <div class="grid grid-cols-2 gap-2 text-sm">
                     <p><strong>Nome:</strong> {{ $produto->user->name }}</p>
-                    <p><strong>Telefone:</strong> {{ $user->telefone ?? 'Não informado' }}</p>
+                    <p><strong>Telefone:</strong> {{ $produto->user->telefone }}</p>
                     <p><strong>Cidade:</strong> 
                         @php $addr = $produto->user->addresses->first(); @endphp
                         {{ $addr->cidade ?? 'Não informado' }} - {{ $addr->estato ?? '' }}
@@ -124,6 +124,15 @@
                     mainPhoto.src = src;
                     mainPhoto.style.opacity = '1';
                 }, 200);
+            }
+        }
+
+        function alterarQuantidade(valor) {
+            const input = document.getElementById('quantidade_input');
+            let atual = parseInt(input.value);
+            let novo = atual + valor;
+            if (novo >= 1 && novo <= {{ $produto->estoque }}) {
+                input.value = novo;
             }
         }
     </script>
