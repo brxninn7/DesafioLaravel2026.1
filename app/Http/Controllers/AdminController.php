@@ -26,8 +26,8 @@ class AdminController extends Controller
                 DB::raw("DATE_FORMAT(created_at, '%m/%Y') as mes")
             )
             ->where('created_at', '>=', now()->subMonths(12))
-            ->groupBy(DB::raw("LAST_DAY(created_at)"), DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
-            ->orderBy(DB::raw("LAST_DAY(created_at)"), 'asc')
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
+            ->orderBy(DB::raw("MIN(created_at)"), 'asc')
             ->get();
         } else {
             $dadosGrafico = Sale::whereHas('product', function($q) {
@@ -38,8 +38,8 @@ class AdminController extends Controller
                 DB::raw("DATE_FORMAT(created_at, '%m/%Y') as mes")
             )
             ->where('created_at', '>=', now()->subMonths(12))
-            ->groupBy(DB::raw("LAST_DAY(created_at)"), DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
-            ->orderBy(DB::raw("LAST_DAY(created_at)"), 'asc')
+            ->groupBy(DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
+            ->orderBy(DB::raw("MIN(created_at)"), 'asc')
             ->get();
         }
 
@@ -56,20 +56,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function sendEmailToUser(Request $request, $id)
-    {
-        $request->validate([
-            'assunto' => 'required|string|max:255',
-            'mensagem' => 'required|string',
-        ]);
-
-        $user = User::findOrFail($id);
-
-        Mail::to($user->email)->send(new AdminContactUser($user, $request->assunto, $request->mensagem));
-
-        return redirect()->back()->with('success', 'E-mail enviado com sucesso para ' . $user->name);
-    }
-
     public function salesHistory(Request $request)
     {
         $query = Sale::with(['user', 'product.user']);
@@ -79,6 +65,15 @@ class AdminController extends Controller
                 $q->where('user_id', auth()->id());
             });
         }
+
+        $dadosGrafico = (clone $query)->select(
+            DB::raw('COUNT(*) as total'),
+            DB::raw("DATE_FORMAT(created_at, '%m/%Y') as mes")
+        )
+        ->where('created_at', '>=', now()->subMonths(12))
+        ->groupBy(DB::raw("DATE_FORMAT(created_at, '%m/%Y')"))
+        ->orderBy(DB::raw("MIN(created_at)"), 'asc')
+        ->get();
 
         if ($request->filled('data_inicio')) {
             $query->whereDate('created_at', '>=', $request->data_inicio);
@@ -101,7 +96,18 @@ class AdminController extends Controller
 
         $vendas = $query->latest()->paginate(10);
 
-        return view('admin.sales-index', compact('vendas'));
+        return view('admin.sales-index', compact('vendas', 'dadosGrafico'));
+    }
+
+    public function sendEmailToUser(Request $request, $id)
+    {
+        $request->validate([
+            'assunto' => 'required|string|max:255',
+            'mensagem' => 'required|string',
+        ]);
+        $user = User::findOrFail($id);
+        Mail::to($user->email)->send(new AdminContactUser($user, $request->assunto, $request->mensagem));
+        return redirect()->back()->with('success', 'E-mail enviado com sucesso para ' . $user->name);
     }
 
     public function users()
@@ -125,48 +131,39 @@ class AdminController extends Controller
     public function editUser($id)
     {
         $user = User::with('addresses')->findOrFail($id);
-
         if ($user->is_admin) {
             if ($user->id !== auth()->id() && $user->created_by !== auth()->id()) {
                 return redirect()->back()->with('error', 'Ação não permitida.');
             }
         }
-
         return view('admin.users-edit', compact('user'));
     }
 
     public function updateUser(Request $request, $id)
     {   
         $user = User::findOrFail($id);
-
         if ($user->is_admin) {
             if ($user->id !== auth()->id() && $user->created_by !== auth()->id()) {
                 return redirect()->back()->with('error', 'Ação não permitida.');
             }
         }
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $id,
             'password' => 'nullable|string|min:8|confirmed',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-
         $userData = $request->only(['name', 'email', 'telefone', 'saldo', 'cpf', 'data_nascimento']);
-
         if ($request->filled('password')) {
             $userData['password'] = Hash::make($request->password);
         }
-
         if ($request->hasFile('foto')) {
             if ($user->foto) {
                 Storage::delete('public/' . $user->foto);
             }
             $userData['foto'] = $request->file('foto')->store('users', 'public');
         }
-
         $user->update($userData);
-
         $user->addresses()->updateOrCreate(
             ['user_id' => $user->id], 
             [
@@ -178,7 +175,6 @@ class AdminController extends Controller
                 'estato' => $request->estado ?? 'MG',
             ]
         );
-
         $route = $user->is_admin ? 'admin.admins.index' : 'admin/users';
         return redirect()->route($route)->with('success', 'Atualizado com sucesso!');
     }
@@ -186,17 +182,14 @@ class AdminController extends Controller
     public function destroyUser($id)
     {
         $user = User::findOrFail($id);
-
         if ($user->is_admin) {
             if ($user->id === auth()->id() || $user->created_by !== auth()->id()) {
                 return redirect()->back()->with('error', 'Ação não permitida.');
             }
         }
-
         if ($user->foto) {
             Storage::delete('public/' . $user->foto);
         }
-
         $user->delete();
         return redirect()->back()->with('success', 'Removido com sucesso!');
     }
@@ -220,33 +213,21 @@ class AdminController extends Controller
             'estado' => 'required|string|max:2',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
-
         $fotoPath = null;
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('users', 'public');
         }
-
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'telefone' => $request->telefone,
-            'cpf' => $request->cpf,
-            'data_nascimento' => $request->data_nascimento,
-            'foto' => $fotoPath,
-            'is_admin' => $request->has('is_admin'),
-            'created_by' => auth()->id()
+            'name' => $request->name, 'email' => $request->email,
+            'password' => Hash::make($request->password), 'telefone' => $request->telefone,
+            'cpf' => $request->cpf, 'data_nascimento' => $request->data_nascimento,
+            'foto' => $fotoPath, 'is_admin' => $request->has('is_admin'), 'created_by' => auth()->id()
         ]);
-
         $user->addresses()->create([
-            'cep' => $request->cep,
-            'logradouro' => $request->logradouro,
-            'numero' => $request->numero,
-            'bairro' => $request->bairro,
-            'cidade' => $request->cidade,
-            'estato' => $request->estado
+            'cep' => $request->cep, 'logradouro' => $request->logradouro,
+            'numero' => $request->numero, 'bairro' => $request->bairro,
+            'cidade' => $request->cidade, 'estato' => $request->estado
         ]);
-
         return redirect()->route('admin/users')->with('success', 'Criado com sucesso!');
     }
 }

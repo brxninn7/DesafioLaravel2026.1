@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/produto/{id}', [ProductController::class, 'show'])->name('product.show');
@@ -43,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/historico-vendas', [AdminController::class, 'salesHistory'])->name('admin.sales.index');
 
     Route::post('/admin/users/{id}/send-email', [AdminController::class, 'sendEmailToUser'])->name('admin.users.email');
+
+    Route::post('/checkout/product/{id}', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store')->middleware('auth');
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {

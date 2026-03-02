@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'pagseguro' => [
+    'email' => env('PAGSEGURO_EMAIL'),
+    'token' => env('PAGSEGURO_TOKEN'),
+    'sandbox' => env('PAGSEGURO_ENV') === 'sandbox',
+    ],
+
 ];

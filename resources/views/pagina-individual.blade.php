@@ -5,6 +5,13 @@
 @section('content')
     <div class="min-h-screen py-10 px-4"> 
         <div class="bg-white text-black max-w-[850px] mx-auto rounded-lg p-6 shadow-2xl">
+
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <div class="produto flex flex-col md:flex-row gap-8">
                 
                 <div class="imagem flex flex-col items-center">
@@ -55,15 +62,9 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <div class="flex border border-gray-300 rounded overflow-hidden h-12">
-                            <button class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
-                            <input type="number" value="1" class="w-12 text-center focus:outline-none border-none">
-                            <button class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
-                        </div>
-
                         @auth
                             @if(!Auth::user()->is_admin)
-                                <form action="{{ route('products.buy', $produto->id) }}" method="POST" class="flex-grow">
+                                <form action="{{ route('checkout.store', $produto->id) }}" method="POST" class="flex-grow">
                                     @csrf
                                     <button type="submit" 
                                         class="w-full bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider {{ $produto->estoque <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
@@ -86,7 +87,10 @@
                 <div class="grid grid-cols-2 gap-2 text-sm">
                     <p><strong>Nome:</strong> {{ $produto->user->name }}</p>
                     <p><strong>Telefone:</strong> {{ $produto->user->telefone }}</p>
-                    <p><strong>Cidade:</strong> {{ $produto->user->cidade }} - {{ $produto->user->estado }}</p>
+                    <p><strong>Cidade:</strong> 
+                        @php $addr = $produto->user->addresses->first(); @endphp
+                        {{ $addr->cidade ?? 'Não informado' }} - {{ $addr->estato ?? '' }}
+                    </p>
                     <p><strong>Membro desde:</strong> {{ $produto->user->created_at->format('d/m/Y') }}</p>
                 </div>
             </div>
