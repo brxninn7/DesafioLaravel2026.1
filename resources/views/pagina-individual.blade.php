@@ -61,16 +61,26 @@
                         </p>
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex flex-col gap-4">
                         @auth
                             @if(!Auth::user()->is_admin)
-                                <form action="{{ route('checkout.store', $produto->id) }}" method="POST" class="flex-grow">
+                                <form action="{{ route('checkout.store') }}" method="POST" class="w-full">
                                     @csrf
-                                    <button type="submit" 
-                                        class="w-full bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider {{ $produto->estoque <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                        {{ $produto->estoque <= 0 ? 'disabled' : '' }}>
-                                        {{ $produto->estoque <= 0 ? 'Esgotado' : 'Comprar' }}
-                                    </button>
+                                    <input type="hidden" name="product_id" value="{{ $produto->id }}">
+                                    
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <div class="flex border border-gray-300 rounded overflow-hidden h-12">
+                                            <button type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()" class="px-4 hover:bg-gray-100 font-bold border-r">-</button>
+                                            <input type="number" name="quantidade" value="1" min="1" max="{{ $produto->estoque }}" class="w-12 text-center focus:outline-none border-none text-black">
+                                            <button type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()" class="px-4 hover:bg-gray-100 font-bold border-l">+</button>
+                                        </div>
+
+                                        <button type="submit" 
+                                            class="flex-grow bg-[#161a24] text-white font-bold h-12 rounded hover:bg-black transition-all shadow-lg uppercase tracking-wider {{ $produto->estoque <= 0 ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                            {{ $produto->estoque <= 0 ? 'disabled' : '' }}>
+                                            {{ $produto->estoque <= 0 ? 'Esgotado' : 'Comprar' }}
+                                        </button>
+                                    </div>
                                 </form>
                             @endif
                         @else
@@ -86,7 +96,7 @@
                 <h3 class="font-bold text-lg text-black mb-2">Informações do Anunciante</h3>
                 <div class="grid grid-cols-2 gap-2 text-sm">
                     <p><strong>Nome:</strong> {{ $produto->user->name }}</p>
-                    <p><strong>Telefone:</strong> {{ $produto->user->telefone }}</p>
+                    <p><strong>Telefone:</strong> {{ $user->telefone ?? 'Não informado' }}</p>
                     <p><strong>Cidade:</strong> 
                         @php $addr = $produto->user->addresses->first(); @endphp
                         {{ $addr->cidade ?? 'Não informado' }} - {{ $addr->estato ?? '' }}

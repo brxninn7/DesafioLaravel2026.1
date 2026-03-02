@@ -45,7 +45,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/admin/users/{id}/send-email', [AdminController::class, 'sendEmailToUser'])->name('admin.users.email');
 
-    Route::post('/checkout/product/{id}', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store')->middleware('auth');
+    Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store')->middleware('auth');
 });
 
     Route::get('/api/cep/{cep}', function ($cep) {

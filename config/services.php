@@ -36,9 +36,9 @@ return [
     ],
 
     'pagseguro' => [
-    'email' => env('PAGSEGURO_EMAIL'),
-    'token' => env('PAGSEGURO_TOKEN'),
-    'sandbox' => env('PAGSEGURO_ENV') === 'sandbox',
+        'checkout_url' => env(key: 'PAGSEGURO_CHECKOUT_URL'),
+        'token' => env(key: 'PAGSEGURO_TOKEN'),
+        'sandbox' => env('PAGSEGURO_ENV', true)
     ],
 
 ];

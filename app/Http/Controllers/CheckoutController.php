@@ -15,47 +15,42 @@ class CheckoutController extends Controller
         $this->pagSeguroService = $pagSeguroService;
     }
 
-    public function store(Request $request, $productId)
+    public function store(Request $request)
     {
-        $produto = Product::findOrFail($productId);
+        $produto = Product::findOrFail($request->product_id);
         $user = auth()->user();
 
-        $nome = trim($user->name);
-        if (!str_contains($nome, ' ')) {
-            $nome .= ' Sobrenome';
-        }
-
         $dadosCheckout = [
-            'itemId1' => $produto->id,
-            'itemDescription1' => substr($produto->titulo, 0, 95),
-            'itemAmount1' => number_format($produto->preco, 2, '.', ''),
-            'itemQuantity1' => '1',
-            'reference' => 'REF_' . $user->id . '_' . time(),
-            'senderName' => $nome,
-            'senderEmail' => $user->email,
+            "customer" => [
+                "name" => $user->name . " Sobrenome",
+                "email" => $user->email,
+            ],
+            "items" => [
+                [
+                    "reference_id" => (string) $produto->id,
+                    "name" => substr($produto->titulo, 0, 64),
+                    "quantity" => (int) $request->input('quantidade', 1),
+                    "unit_amount" => (int) ($produto->preco * 100)
+                ]
+            ],
+            "payment_methods" => [
+                ["type" => "CREDIT_CARD"],
+                ["type" => "BOLETO"],
+                ["type" => "PIX"]
+            ],
+            "redirect_url" => route('home'), 
         ];
 
-        try {
-            $xmlString = $this->pagSeguroService->criarCheckout($dadosCheckout);
+        $resultado = $this->pagSeguroService->criarCheckout($dadosCheckout);
 
-            if (str_contains($xmlString, 'Unauthorized')) {
-                return redirect()->back()->with('error', 'Erro de Autenticação no PagSeguro.');
+        if (isset($resultado['links'])) {
+            foreach ($resultado['links'] as $link) {
+                if ($link['rel'] == 'PAY') {
+                    return redirect()->to($link['href']);
+                }
             }
-
-            $xml = simplexml_load_string($xmlString);
-
-            if (isset($xml->code)) {
-                $url = env('PAGSEGURO_ENV') === 'sandbox' 
-                    ? 'https://sandbox.pagseguro.uol.com.br/v2/checkout/payment.html?code=' 
-                    : 'https://pagseguro.uol.com.br/v2/checkout/payment.html?code=';
-                
-                return redirect()->to($url . $xml->code);
-            }
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Falha na conexão com a API.');
         }
 
-        return redirect()->back()->with('error', 'Erro ao gerar checkout.');
+        return redirect()->back()->with('error', 'Erro ao gerar checkout JSON. Verifique os logs.');
     }
 }

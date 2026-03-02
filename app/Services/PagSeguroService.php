@@ -7,32 +7,27 @@ use Illuminate\Support\Facades\Http;
 class PagSeguroService
 {
     protected $baseUrl;
-    protected $email;
     protected $token;
 
     public function __construct()
     {
-        $this->email = config('services.pagseguro.email');
         $this->token = config('services.pagseguro.token');
         $this->baseUrl = config('services.pagseguro.sandbox') 
-            ? 'https://ws.sandbox.pagseguro.uol.com.br' 
-            : 'https://ws.pagseguro.uol.com.br';
+            ? 'https://sandbox.api.pagseguro.com' 
+            : 'https://api.pagseguro.com';
     }
 
     public function criarCheckout(array $dados)
     {
         $response = Http::withHeaders([
-            'Content-Type' => 'application/x-www-form-urlencoded; charset=ISO-8859-1'
+            'Authorization' => 'Bearer ' . $this->token,
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
         ])
         ->withoutVerifying()
         ->timeout(15)
-        ->asForm()
-        ->post("{$this->baseUrl}/v2/checkout", array_merge([
-            'email' => $this->email,
-            'token' => $this->token,
-            'currency' => 'BRL',
-        ], $dados));
+        ->post("{$this->baseUrl}/checkouts", $dados);
 
-        return $response->body();
+        return $response->json();
     }
 }
